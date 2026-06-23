@@ -1,0 +1,14 @@
+{
+  "name": "backendd",
+  "version": "1.0.0",
+  "description": "LMS Backend Core Foundation",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+  "start": "node --env-file=.env server.js",
+  "dev": "node --env-file=.env --watch server.js"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
