@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useSocket } from '../context/SocketContext';
 import { Bell, X, CheckCircle, AlertCircle } from 'lucide-react';
 
@@ -6,6 +6,18 @@ import { Bell, X, CheckCircle, AlertCircle } from 'lucide-react';
 const NotificationToast = () => {
     const { socket } = useSocket();
     const [notifications, setNotifications] = useState([]);
+
+    const removeNotification = useCallback((id) => {
+        setNotifications(prev => prev.filter(n => n.id !== id));
+    }, []);
+
+    const addNotification = useCallback((message, type) => {
+        const id = Date.now();
+        setNotifications(prev => [...prev, { id, message, type }]);
+        setTimeout(() => {
+            removeNotification(id);
+        }, 4000);
+    }, [removeNotification]);
 
     useEffect(() => {
         // Listen to socket
@@ -27,19 +39,7 @@ const NotificationToast = () => {
             if (socket) socket.off('newAssignment');
             window.removeEventListener('show-toast', handleCustomToast);
         };
-    }, [socket]);
-
-    const addNotification = (message, type) => {
-        const id = Date.now();
-        setNotifications(prev => [...prev, { id, message, type }]);
-        setTimeout(() => {
-            removeNotification(id);
-        }, 4000);
-    };
-
-    const removeNotification = (id) => {
-        setNotifications(prev => prev.filter(n => n.id !== id));
-    };
+    }, [socket, addNotification]);
 
     return (
         <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none">
